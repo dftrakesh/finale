@@ -30,6 +30,14 @@ public class FinaleAPIResource extends Finale {
     }
 
     @SneakyThrows
+    public ProductResponse getProduct(String sku) {
+        URI uri = baseUrl(PRODUCT_URL + FORWARD_SLASH + sku.replaceAll(" ", "%20"));
+        HttpRequest request = get(uri);
+        HttpResponse.BodyHandler<ProductResponse> handler = new JsonBodyHandler<>(ProductResponse.class);
+        return getRequestWrapped(request, handler);
+    }
+
+    @SneakyThrows
     public List<List<String>> getReport(String url) {
         URI uri = baseUrl(url);
         HttpResponse.BodyHandler<FinaleReport[]> handler = new JsonBodyHandler<>(FinaleReport[].class);
