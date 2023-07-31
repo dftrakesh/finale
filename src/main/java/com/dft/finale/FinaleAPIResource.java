@@ -6,10 +6,11 @@ import com.dft.finale.product.ProductResponse;
 import com.dft.finale.report.FinaleReport;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
-
 import java.net.URI;
+import java.net.URLEncoder;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 public class FinaleAPIResource extends Finale {
@@ -31,7 +32,8 @@ public class FinaleAPIResource extends Finale {
 
     @SneakyThrows
     public ProductResponse getProduct(String sku) {
-        URI uri = baseUrl(PRODUCT_URL + FORWARD_SLASH + sku.replaceAll(" ", "%20"));
+        String encodedUrl = URLEncoder.encode(sku, StandardCharsets.UTF_8);
+        URI uri = baseUrl(PRODUCT_URL + FORWARD_SLASH + encodedUrl);
         HttpRequest request = get(uri);
         HttpResponse.BodyHandler<ProductResponse> handler = new JsonBodyHandler<>(ProductResponse.class);
         return getRequestWrapped(request, handler);
