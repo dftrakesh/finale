@@ -33,7 +33,7 @@ public class Finale implements FinaleConstants {
                 .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
                 .connectTimeout(Duration.ofSeconds(360))
                 .build();
-        //login();
+        login();
     }
 
     @SneakyThrows
