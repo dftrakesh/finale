@@ -33,7 +33,7 @@ public class Finale implements FinaleConstants {
                 .cookieHandler(new CookieManager(null, CookiePolicy.ACCEPT_ALL))
                 .connectTimeout(Duration.ofSeconds(360))
                 .build();
-        login();
+        //login();
     }
 
     @SneakyThrows
@@ -76,11 +76,16 @@ public class Finale implements FinaleConstants {
 
     @SneakyThrows
     public <T> T getRequestWrapped(HttpRequest request, HttpResponse.BodyHandler<T> handler) {
-        return client
-                .sendAsync(request, handler)
-                .thenComposeAsync(response -> tryResend(client, request, handler, response, 1))
-                .get()
-                .body();
+        try {
+            return client
+                    .sendAsync(request, handler)
+                    .thenComposeAsync(response -> tryResend(client, request, handler, response, 1))
+                    .get()
+                    .body();
+        } catch (Exception exception) {
+            login();
+        }
+        return getRequestWrapped(request, handler);
     }
 
     @SneakyThrows
