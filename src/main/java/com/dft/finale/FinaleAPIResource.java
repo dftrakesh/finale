@@ -4,8 +4,12 @@ import com.dft.finale.handler.JsonBodyHandler;
 import com.dft.finale.product.ProductRequest;
 import com.dft.finale.product.ProductResponse;
 import com.dft.finale.report.FinaleReport;
+import com.dft.finale.stock.InventoryTransferRequest;
+import com.dft.finale.stock.InventoryTransferResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.SneakyThrows;
+
+import java.net.HttpCookie;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpRequest;
@@ -19,6 +23,11 @@ public class FinaleAPIResource extends Finale {
 
     public FinaleAPIResource(String userName, String password, String storeName) {
         super(userName, password, storeName);
+    }
+
+    public HttpCookie getSeesionSecret() {
+        return getCookies().stream().filter(httpCookie -> httpCookie.getName().equalsIgnoreCase("JSESSIONID"))
+                .findFirst().orElse(null);
     }
 
     @SneakyThrows
@@ -46,5 +55,14 @@ public class FinaleAPIResource extends Finale {
         HttpRequest request = get(uri);
         FinaleReport[] report = getRequestWrapped(request, handler);
         return report[0].getData();
+    }
+
+    @SneakyThrows
+    public InventoryTransferResponse inventoryStockTransfer(InventoryTransferRequest inventoryTransferRequest) {
+        URI uri = baseUrl(RESOURCE_INVENTORY_TRANSFER);
+        String jsonBody = objectMapper.writeValueAsString(inventoryTransferRequest);
+        HttpRequest request = post(uri, jsonBody);
+        HttpResponse.BodyHandler<InventoryTransferResponse> handler = new JsonBodyHandler<>(InventoryTransferResponse.class);
+        return getRequestWrapped(request, handler);
     }
 }
